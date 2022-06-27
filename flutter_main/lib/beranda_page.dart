@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'food_rec.dart';
+import 'medical_record.dart';
 import 'widgets/discover_card.dart';
 
 class BerandaPage extends StatefulWidget {
@@ -48,15 +49,15 @@ class _BerandaPageState extends State<BerandaPage> {
                   SizedBox(width: 28.w),
                   DiscoverCard(
                     tag: "foodRec",
-                    onTap: onSleepMeditationTapped,
+                    onTap: onFoodRecTapped,
                     title: "Food Recommendation",
                     subtitle: "dapatkan rekomendasi makanan dengan kandungan yang diinginkan",
                   ),
                   SizedBox(width: 20.w),
                   DiscoverCard(
-                    onTap: onDepressionHealingTapped,
-                    title: "Sign in as Admin",
-                    subtitle: "mengelola data konselor dan pasien klink Telkomedika",
+                    onTap: onMedicalRecTapped,
+                    title: "Get your Medical Record",
+                    subtitle: "mengakses catatan kesehatan pasien",
                   ),
                 ],
               ),
@@ -100,11 +101,12 @@ class _BerandaPageState extends State<BerandaPage> {
   void onRenewTapped() {
   }
 
-  void onSleepMeditationTapped() {
+  void onFoodRecTapped() {
     Get.to(()=> FoodRecPage(), transition: Transition.rightToLeft);
   }
 
-  void onDepressionHealingTapped() {
+  void onMedicalRecTapped() {
+    Get.to(()=> MedicalRecPage(), transition: Transition.rightToLeft);
   }
 
   void onSearchIconTapped() {
