@@ -41,6 +41,7 @@ class _LogoutPageState extends State<LogoutPage> {
     setState(() {
       preferences.remove("is_login");
       preferences.remove("username");
+      preferences.remove("nim");
     });
 
     Navigator.pushAndRemoveUntil(

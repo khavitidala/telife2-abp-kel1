@@ -208,6 +208,7 @@ class _MainPageState extends State<LoginApp> {
   saveSession(User user) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString("username", user.username);
+    await pref.setString("nim", user.nim);
     await pref.setBool("is_login", true);
 
     Navigator.pushAndRemoveUntil(
