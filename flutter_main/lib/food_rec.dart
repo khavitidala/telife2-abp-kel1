@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_main/constant.dart';
+import 'package:flutter_main/widgets/dialogs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'icons.dart';
+import 'models/food.dart';
 import 'widgets/svg_asset.dart';
+import 'package:http/http.dart' as http;
 
 class FoodRecPage extends StatefulWidget {
   const FoodRecPage({Key? key}) : super(key: key);
@@ -14,11 +20,11 @@ class FoodRecPage extends StatefulWidget {
 class _FoodRecPageState extends State<FoodRecPage> {
   double _currentSliderValueC = 0;
   double _currentSliderValueE = 71;
-  double _currentSliderValueS = 0;
   double _currentSliderValueP = 0;
   double _currentSliderValueFa = 0;
   double _currentSliderValueFi = 0;
   double _currentSliderValueCh = 0;
+  List<Food> listFood = [];
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +56,7 @@ class _FoodRecPageState extends State<FoodRecPage> {
                 Padding(
                   padding: EdgeInsets.only(left: 28.w),
                   child: Text(
-                    "please fill up the content",
+                    "Slide left or right to change the value.",
                     style: TextStyle(
                         color: Color(0xffffffff).withOpacity(0.7),
                         fontWeight: FontWeight.w400,
@@ -97,23 +103,6 @@ class _FoodRecPageState extends State<FoodRecPage> {
                             onChanged: (double value) {
                               setState(() {
                                 _currentSliderValueC = value;
-                              });
-                            },
-                          ),
-
-                          //slider sugar
-                          Text("Sugar : " + _currentSliderValueS.round().toString(),
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(fontSize: 15, color: Colors.white),
-                          ),
-                          Slider(
-                            value: _currentSliderValueS,
-                            max: 45,
-                            min: 0,
-                            label: _currentSliderValueS.round().toString(),
-                            onChanged: (double value) {
-                              setState(() {
-                                _currentSliderValueS = value;
                               });
                             },
                           ),
@@ -191,62 +180,16 @@ class _FoodRecPageState extends State<FoodRecPage> {
                             child: ElevatedButton(
                               child: const Text('Show'),
                               onPressed: () {
-                                showModalBottomSheet<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          const Text('Hasil :',
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                          Card(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: const <Widget>[
-                                                ListTile(
-                                                  leading: Icon(Icons.food_bank),
-                                                  title: Text('Makanan 1'),
-                                                  subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Card(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: const <Widget>[
-                                                ListTile(
-                                                  leading: Icon(Icons.food_bank),
-                                                  title: Text('Makanan 2'),
-                                                  subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Card(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: const <Widget>[
-                                                ListTile(
-                                                  leading: Icon(Icons.food_bank),
-                                                  title: Text('Makanan 3'),
-                                                  subtitle: Text('Music by Julie Gable. Lyrics by Sidney Stein.'),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          ElevatedButton(
-                                            child: const Text('Close'),
-                                            onPressed: () => Navigator.pop(context),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
+                                setState(() {
+                                  recommender(
+                                    _currentSliderValueE,
+                                    _currentSliderValueC,
+                                    _currentSliderValueP,
+                                    _currentSliderValueFa,
+                                    _currentSliderValueFi,
+                                    _currentSliderValueCh
+                                  );
+                                });
                               },
                             ),
                           ),
@@ -303,6 +246,106 @@ class _FoodRecPageState extends State<FoodRecPage> {
           ],
         ),
       ),
+    );
+  }
+
+  recommender(energy, carbo, protein, fat, fiber, cholestrol) async {
+    final GlobalKey<State> _keyLoader = GlobalKey<State>();
+    Dialogs.loading(context, _keyLoader, "Loading ...");
+    
+    try {
+      final response = await http.post(
+          Uri.parse(APIURL+"api/food/"),
+          headers: {'Content-Type': 'application/json; charset=UTF-8'},
+          body: jsonEncode({
+              "energy": energy,
+              "carbo": carbo,
+              "protein": protein,
+              "fat" : fat,
+              "fiber": fiber,
+              "cholestrol": cholestrol
+          }));
+
+      final output = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Navigator.of(_keyLoader.currentContext!, rootNavigator: false).pop();
+        for (var i = 0; i < output["data"].length; i++) {
+            listFood.add(Food.fromJson(output["data"][i]));
+        }
+        modalFood(listFood);
+      } else {
+        Navigator.of(_keyLoader.currentContext!, rootNavigator: false).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+            output['message'],
+            style: const TextStyle(fontSize: 16),
+          )),
+        );
+      }
+    } catch (e) {
+      Navigator.of(_keyLoader.currentContext!, rootNavigator: false).pop();
+      Dialogs.popUp(context, '$e');
+      debugPrint('$e');
+    }
+  }
+
+  modalFood(List<Food> food) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text('Results:',
+                style: TextStyle(fontSize: 20),
+              ),
+              Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Image.network(food[0].picUrl),
+                      title: Text(food[0].name),
+                      subtitle: Text("Total calories: "+food[0].calories.toString()),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Image.network(food[1].picUrl),
+                      title: Text(food[1].name),
+                      subtitle: Text("Total calories: "+food[1].calories.toString()),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Image.network(food[2].picUrl),
+                      title: Text(food[2].name),
+                      subtitle: Text("Total calories: "+food[2].calories.toString()),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                child: const Text('Close'),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 

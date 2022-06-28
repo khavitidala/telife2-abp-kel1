@@ -383,6 +383,7 @@ class _FormMedical extends State<FormMedical> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               TextFormField(
+                                style: TextStyle(color: Colors.white),
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                     labelText: 'NIM',
@@ -418,6 +419,7 @@ class _FormMedical extends State<FormMedical> {
                                 height: 20,
                               ),
                               TextFormField(
+                                style: TextStyle(color: Colors.white),
                                 decoration: const InputDecoration(
                                     labelText: 'Diagnosa',
                                     labelStyle: TextStyle(
@@ -452,6 +454,7 @@ class _FormMedical extends State<FormMedical> {
                                 height: 20,
                               ),
                               TextFormField(
+                                style: TextStyle(color: Colors.white),
                                 maxLines: 5,
                                 decoration: const InputDecoration(
                                     labelText: 'Treatment',

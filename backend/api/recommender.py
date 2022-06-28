@@ -74,6 +74,7 @@ class Recommender:
             temp = {}
             temp['nama'] = nutrition_df.loc[i]['nama']
             temp['pic_url'] = nutrition_df.loc[i]['pic_url']
+            temp['calories'] = nutrition_df.loc[i]['energy']
             recommended_products.append(temp)
 
         return recommended_products
