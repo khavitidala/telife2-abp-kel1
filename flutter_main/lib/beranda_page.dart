@@ -13,6 +13,11 @@ class BerandaPage extends StatefulWidget {
 }
 
 class _BerandaPageState extends State<BerandaPage> {
+
+  void onBackIconTapped() {
+    Get.back();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
