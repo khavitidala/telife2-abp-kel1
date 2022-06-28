@@ -26,8 +26,8 @@ class Welcome extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xffE6E6E6),
                 Color(0xff14279B),
+                Color(0xff121421),
               ],
             ),
           ),
