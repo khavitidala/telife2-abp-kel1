@@ -40,7 +40,7 @@ class AkunView(View):
         data = json.loads(request.body.decode("utf-8"))
         try:
             AkunApp.register_akun(**data)
-            return JsonResponse({"message":"Registrasi berhasil! Silakan Login"})
+            return JsonResponse({"message":"Registration successfully"})
         except ApiError as e:
             return JsonResponse({"message": str(e)}, status=404)
     
@@ -48,12 +48,12 @@ class AkunView(View):
     def put(self, request):
         data = json.loads(request.body.decode("utf-8"))
         AkunApp.update_akun(data["nim"], **data)
-        return JsonResponse({"message":"Data Berhasil diupdate!"})
+        return JsonResponse({"message":"Update data successfully!"})
     
     @method_decorator([csrf_exempt])
     def delete(self, request, nim: str):
         AkunApp.delete_akun(nim)
-        return JsonResponse({"message":"Data berhasil dihapus!"})
+        return JsonResponse({"message":"Delete data successfully!"})
     
 
 class LoginView(View):
@@ -85,6 +85,6 @@ class MedicalRecordView(View):
     @method_decorator([csrf_exempt])
     def delete(self, request, id: int):
         MedicalRecordApp.delete(id)
-        return JsonResponse({"message":"Data berhasil dihapus!"})
+        return JsonResponse({"message":"Delete data successfully!"})
 
 

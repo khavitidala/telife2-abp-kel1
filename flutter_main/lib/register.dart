@@ -1,7 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_main/constant.dart';
+import 'package:flutter_main/home_page.dart';
+import 'package:flutter_main/widgets/dialogs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterApp extends StatefulWidget {
 
@@ -11,6 +18,8 @@ class RegisterApp extends StatefulWidget {
 
 class _MainPageState extends State<RegisterApp> {
   final formKey = GlobalKey<FormState>();
+  String name = '';
+  String identityNumber = '';
   String username = '';
   String email = '';
   String password = '';
@@ -58,6 +67,10 @@ class _MainPageState extends State<RegisterApp> {
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   children: [
+                    buildName(),
+                    SizedBox(height: 16.h),
+                    buildNim(),
+                    SizedBox(height: 16.h),
                     buildUsername(),
                     SizedBox(height: 16.h),
                     buildEmail(),
@@ -70,6 +83,54 @@ class _MainPageState extends State<RegisterApp> {
               ),
             ])
       ));
+
+  Widget buildName() => TextFormField(
+        style: const TextStyle(color: Color(0xFFbdc6cf)),
+        decoration: const InputDecoration(
+          labelText: 'Name',
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          labelStyle: TextStyle(color: Colors.white),
+          fillColor: Colors.white,
+        ),
+        validator: (value) {
+          if (value!.length < 2) {
+            return 'Enter at least 2 characters';
+          } else {
+            return null;
+          }
+        },
+        maxLength: 255,
+        onSaved: (value) => setState(() => name = value!),
+      );
+
+  Widget buildNim() => TextFormField(
+        style: const TextStyle(color: Color(0xFFbdc6cf)),
+        decoration: const InputDecoration(
+          labelText: 'Identity Numbers',
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          labelStyle: TextStyle(color: Colors.white),
+          fillColor: Colors.white,
+        ),
+        validator: (value) {
+          if (value!.length < 2) {
+            return 'Enter at least 2 characters';
+          } else {
+            return null;
+          }
+        },
+        maxLength: 255,
+        onSaved: (value) => setState(() => identityNumber = value!),
+      );
 
   Widget buildUsername() => TextFormField(
         style: const TextStyle(color: Color(0xFFbdc6cf)),
@@ -151,26 +212,101 @@ class _MainPageState extends State<RegisterApp> {
         builder: (context) => ButtonWidget(
           text: 'Submit',
           onClicked: () {
-            final isValid = formKey.currentState!.validate();
-            // FocusScope.of(context).unfocus();
-
-            if (isValid) {
-              formKey.currentState!.save();
-
-              final message =
-                  'Username: $username\nPassword: $password\nEmail: $email';
-              final snackBar = SnackBar(
-                content: Text(
-                  message,
-                  style: const TextStyle(fontSize: 20),
-                ),
-                backgroundColor: Colors.green,
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
+            setState(() {
+              final isValid = formKey.currentState!.validate();
+              if (isValid) {
+                formKey.currentState!.save();
+                doSignUp(name, identityNumber, username, email, password);
+                // final message =
+                //     'Username: $username\nPassword: $password\nEmail:';
+                // final snackBar = SnackBar(
+                //   content: Text(
+                //     message,
+                //     style: const TextStyle(fontSize: 20),
+                //   ),
+                //   backgroundColor: Colors.green,
+                // );
+                // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            });
           },
         ),
       );
+  doSignUp(name, identityNumber, username, email, password) async {
+    final GlobalKey<State> _keyLoader = GlobalKey<State>();
+    Dialogs.loading(context, _keyLoader, "Loading ...");
+
+    try {
+      final response = await http.post(
+          Uri.parse(APIURL+"api/akun/"),
+          headers: {'Content-Type': 'application/json; charset=UTF-8'},
+          body: jsonEncode({
+            "nama": name,
+            "nim": identityNumber,
+            "username": username,
+            "email": email,
+            "password": password,
+          }));
+
+      final output = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => const HomePage(),
+          ),
+          (route) => false,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+            "Register Succesfuly",
+            style: TextStyle(fontSize: 16),
+          )),
+        );
+        //debugPrint(output['message']);
+      } else {
+        Navigator.of(_keyLoader.currentContext!, rootNavigator: false).pop();
+        //debugPrint(output['message']);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+            output['message'],
+            style: const TextStyle(fontSize: 16),
+          )),
+        );
+      }
+    } catch (e) {
+      Navigator.of(_keyLoader.currentContext!, rootNavigator: false).pop();
+      Dialogs.popUp(context, '$e');
+      debugPrint('$e');
+    }
+  }
+
+  void ceckLogin() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var islogin = pref.getBool("is_login");
+    if (islogin != null && islogin) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage(),
+        ),
+        (route) => false,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    ceckLogin();
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+  }
 }
 
 class ButtonWidget extends StatelessWidget {

@@ -163,7 +163,7 @@ class _MainPageState extends State<LoginApp> {
 
   doLogin(username, password) async {
     final GlobalKey<State> _keyLoader = GlobalKey<State>();
-    Dialogs.loading(context, _keyLoader, "Proses ...");
+    Dialogs.loading(context, _keyLoader, "Loading ...");
 
     try {
       final response = await http.post(
@@ -193,7 +193,7 @@ class _MainPageState extends State<LoginApp> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-            output.toString(),
+            output['message'],
             style: const TextStyle(fontSize: 16),
           )),
         );
