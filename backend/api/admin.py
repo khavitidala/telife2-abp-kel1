@@ -12,6 +12,8 @@ class AkunAdmin(admin.ModelAdmin):
 class MedicalRecordAdmin(admin.ModelAdmin):
     list_display = [f.name for f in MedicalRecord._meta.fields]
 
-@admin.register(Food)
-class FoodAdmin(admin.ModelAdmin):
-    list_display = [f.name for f in Food._meta.fields]
+# @admin.register(Food)
+# class FoodAdmin(admin.ModelAdmin):
+#     list_display = [f.name for f in Food._meta.fields]
+
+admin.site.register(Food)
