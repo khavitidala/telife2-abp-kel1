@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_main/models/news.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'food_rec.dart';
 import 'medical_record.dart';
 import 'widgets/discover_card.dart';
+import 'package:http/http.dart' as http;
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key,}) : super(key: key);
@@ -13,6 +17,35 @@ class BerandaPage extends StatefulWidget {
 }
 
 class _BerandaPageState extends State<BerandaPage> {
+  List<News> listNews = [];
+
+  getListNews() async {
+    try {
+      final response = await http.get(
+          Uri.parse("http://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=eb73e8e6bf3f4375883cbc0da9954bb3&pageSize=3"),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
+
+      if (response.statusCode == 200) {
+        final dataDecode = jsonDecode(response.body);
+        setState(() {
+          for (var i = 0; i < dataDecode.length; i++) {
+            listNews.add(News.fromJson(dataDecode["articles"][i]));
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('$e');
+    }
+  }
+
+  @override
+  void initState() {
+    getListNews();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,13 +123,52 @@ class _BerandaPageState extends State<BerandaPage> {
 
             ),
             SizedBox(height: 16.h),
-
+            ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: listNews.length,
+              itemBuilder: (BuildContext context, int index) {
+                return buildNewsItem(index);
+            }),
           ],
         ),
       ),
     );
   }
 
+  Widget buildNewsItem(index) {
+    var news = listNews[index];
+    return Card(
+          child: Row(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: TextButton(
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => Todo(data: news)))
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Text(
+                          "${news.title}",
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        Text(
+                          "${news.author}",
+                          style: const TextStyle(fontSize: 12),
+                        )
+                      ],
+                    )
+                  ),
+              )
+            ]
+          )
+    );
+  }
 
   void onRenewTapped() {
   }
@@ -110,5 +182,27 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   void onSearchIconTapped() {
+  }
+}
+
+class Todo extends StatelessWidget {
+  Todo({Key? key, required this.data}) : super(key: key);
+  News data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(data.title),
+        centerTitle: true,
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(15),
+        child: Text(
+              "title: ${data.title}\n\n"
+              "description: ${data.description}\n\n"
+        )
+      ),
+    );
   }
 }
