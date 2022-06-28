@@ -73,7 +73,7 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
                 //Content
 
                 Container(
-                  padding: EdgeInsets.only(left: 28.w),
+                  padding: EdgeInsets.only(left: 28.w, right: 28.w),
                   child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: users.length,
