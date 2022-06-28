@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_main/constant.dart';
 import 'package:flutter_main/models/news.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,11 +19,13 @@ class BerandaPage extends StatefulWidget {
 
 class _BerandaPageState extends State<BerandaPage> {
   List<News> listNews = [];
+  int pagesize = 3;
+  int randompage = 1;
 
   getListNews() async {
     try {
       final response = await http.get(
-          Uri.parse("http://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=eb73e8e6bf3f4375883cbc0da9954bb3&pageSize=3"),
+          Uri.parse(NEWSAPI+pagesize.toString()+"&page="+randompage.toString()),
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
           });
@@ -171,6 +174,7 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   void onRenewTapped() {
+    
   }
 
   void onFoodRecTapped() {
