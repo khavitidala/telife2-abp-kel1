@@ -11,6 +11,7 @@ import 'widgets/discover_card.dart';
 import 'package:http/http.dart' as http;
 import 'widgets/customListTile.dart';
 
+
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key,}) : super(key: key);
 
@@ -142,7 +143,7 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   void onRenewTapped() {
-    
+
   }
 
   void onFoodRecTapped() {

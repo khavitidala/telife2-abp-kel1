@@ -379,7 +379,12 @@ class _FormMedical extends State<FormMedical> {
 
       final output = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        Get.back();
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => MedicalRecPage(),
+          ),
+        );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text(
