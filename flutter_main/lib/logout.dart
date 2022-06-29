@@ -71,6 +71,10 @@ class _LogoutPageState extends State<LogoutPage> {
   dispose() {
     super.dispose();
   }
+
+  void onBackIconTapped() {
+   Get.back();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -167,9 +171,4 @@ class _LogoutPageState extends State<LogoutPage> {
       ),
     );
   }
-
-  void onBackIconTapped() {
-   Get.back();
-  }
-
 }
