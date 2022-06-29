@@ -9,7 +9,6 @@ import 'food_rec.dart';
 import 'medical_record.dart';
 import 'widgets/discover_card.dart';
 import 'package:http/http.dart' as http;
-import 'dart:math';
 
 
 class BerandaPage extends StatefulWidget {
@@ -22,11 +21,10 @@ class BerandaPage extends StatefulWidget {
 class _BerandaPageState extends State<BerandaPage> {
   List<News> listNews = [];
   int pagesize = 3;
-  int randompage = Random().nextInt(7);
+  int randompage = 1;
 
   getListNews() async {
     try {
-      print(randompage);
       final response = await http.get(
           Uri.parse(NEWSAPI+pagesize.toString()+"&page="+randompage.toString()),
           headers: {
@@ -37,13 +35,10 @@ class _BerandaPageState extends State<BerandaPage> {
         final dataDecode = jsonDecode(response.body);
         setState(() {
           for (var i = 0; i < dataDecode.length; i++) {
-            if (dataDecode['articles'][i]['urlToImage'] is String){
-              listNews.add(News.fromJson(dataDecode["articles"][i]));
-            }
+            listNews.add(News.fromJson(dataDecode["articles"][i]));
           }
         });
       }
-      randompage = Random().nextInt(7);
     } catch (e) {
       debugPrint('$e');
     }
@@ -180,13 +175,7 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   void onRenewTapped() {
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => BerandaPage(),
-        transitionDuration: Duration(seconds: 0),
-      ),
-    );
+
   }
 
   void onFoodRecTapped() {

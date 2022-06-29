@@ -41,7 +41,6 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
   @override
   void initState() {
     // TODO: implement initState
-    ceckLogin();
     super.initState();
     loading = true;
     Services.getMRs(nim).then((list) {
