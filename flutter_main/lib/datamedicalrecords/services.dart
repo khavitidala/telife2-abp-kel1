@@ -8,7 +8,7 @@ class Services {
 
   static Future<List<MR>> getMRs(nim) async {
     try {
-      final response = await http.get(Uri.parse(APIURL+"/api/medical/"+nim));
+      final response = await http.get(Uri.parse(APIURL+"api/medical/"+nim));
       if (response.statusCode == 200) {
         final List<MR> listMRs = MRsFromJson(response.body);
         return listMRs;
@@ -16,6 +16,7 @@ class Services {
         return List<MR>.empty();
       }
     } catch (e){
+      print(e.toString());
       return List<MR>.empty();
     }
   }
