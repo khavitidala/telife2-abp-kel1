@@ -209,8 +209,8 @@ class _MainPageState extends State<LoginApp> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString("username", user.username);
     await pref.setString("nim", user.nim);
+    await pref.setBool("is_konselor", user.iskonselor);
     await pref.setBool("is_login", true);
-
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
