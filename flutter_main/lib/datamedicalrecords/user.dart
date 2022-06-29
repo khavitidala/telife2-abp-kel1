@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-List<MR> MRsFromJson(String str) => List<MR>.from(json.decode(str).map((x) => MR.fromJson(x)));
-
-String MRToJson(List<MR> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+import 'package:flutter/foundation.dart';
 
 class MR {
   MR({
@@ -19,15 +17,8 @@ class MR {
 
   factory MR.fromJson(Map<String, dynamic> json) => MR(
     id: json["id"],
-    pasien: json["pasien"],
+    pasien: json["pasien_id"],
     diagnosa: json["diagnosa"],
     treatment: json["treatment"],
   );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "pasien": pasien,
-    "diagnosa" : diagnosa,
-    "treatment" : treatment,
-  };
 }

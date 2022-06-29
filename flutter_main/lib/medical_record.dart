@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'icons.dart';
 import 'widgets/svg_asset.dart';
-import 'datamedicalrecords/services.dart';
 import 'datamedicalrecords/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_main/constant.dart';
@@ -25,28 +24,45 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
   bool loading = false;
   String nim = "";
 
-  void ceckLogin() async {
+  Future<String> ceckLogin() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var islogin = pref.getBool("is_login");
-    if (islogin != null && islogin) {
-      nim = pref.getString("nim")!;
+    return pref.getString("nim")!;
+  }
+
+  void getMrs(String nim) async {
+    try {
+      final response = await http.get(
+          Uri.parse(APIURL+"api/medical/"+nim+"/"),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
+
+      if (response.statusCode == 200) {
+        final dataDecode = jsonDecode(response.body);
+        setState(() {
+          if(mrs.isEmpty) {
+            for (var i = 0; i < dataDecode.length; i++) {
+              debugPrint(dataDecode["data"][i].toString());
+              mrs.add(MR.fromJson(dataDecode["data"][i]));
+            }
+          }
+          loading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('$e');
     }
   }
 
   @override
-  dispose() {
-    super.dispose();
-  }
-
-  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     loading = true;
-    Services.getMRs(nim).then((list) {
+    ceckLogin().then((x) {
       setState(() {
-        mrs = list;
-        loading = false;
+        nim = x;
+        getMrs(nim);
+        debugPrint(x);
       });
     });
   }
@@ -194,6 +210,11 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
 
   void onBackIconTapped() {
     Get.back();
+  }
+
+  @override
+  dispose() {
+    super.dispose();
   }
 
 }
@@ -365,6 +386,13 @@ class _FormMedical extends State<FormMedical> {
                 "Data Succesfully Added",
                 style: TextStyle(fontSize: 16),
               )),
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => const MedicalRecPage(),
+          ),
+          (route) => false,
         );
         //debugPrint(output['message']);
       } else {
