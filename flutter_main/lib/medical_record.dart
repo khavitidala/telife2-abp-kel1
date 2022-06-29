@@ -40,12 +40,12 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
       if (response.statusCode == 200) {
         final dataDecode = jsonDecode(response.body);
         setState(() {
-          if(mrs.isEmpty) {
-            for (var i = 0; i < dataDecode.length; i++) {
+          // if(mrs.isEmpty) {
+            for (var i = 0; i < dataDecode["data"].length; i++) {
               debugPrint(dataDecode["data"][i].toString());
               mrs.add(MR.fromJson(dataDecode["data"][i]));
             }
-          }
+          // }
           loading = false;
         });
       }

@@ -1,2 +1,2 @@
 final String APIURL = "http://27f7-180-244-139-143.ngrok.io/";
-final String NEWSAPI = "http://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=eb73e8e6bf3f4375883cbc0da9954bb3&pageSize=";
+final String NEWSAPI = "http://newsapi.org/v2/top-headlines?country=id&category=health&apiKey=dad96700b7604b5586bec95501c311fd&pageSize=";
