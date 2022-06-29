@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -5,6 +7,10 @@ import 'icons.dart';
 import 'widgets/svg_asset.dart';
 import 'datamedicalrecords/services.dart';
 import 'datamedicalrecords/user.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_main/constant.dart';
+import 'package:flutter_main/widgets/dialogs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MedicalRecPage extends StatefulWidget {
   const MedicalRecPage({Key? key}) : super(key: key);
@@ -15,17 +21,31 @@ class MedicalRecPage extends StatefulWidget {
 
 class _MedicalRecPageState extends State<MedicalRecPage> {
 
-  List<User> users = [];
+  List<MR> mrs = [];
   bool loading = false;
+  String nim = "";
+
+  void ceckLogin() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var islogin = pref.getBool("is_login");
+    if (islogin != null && islogin) {
+      nim = pref.getString("nim")!;
+    }
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     loading = true;
-    Services.getUsers().then((list) {
+    Services.getMRs(nim).then((list) {
       setState(() {
-        users = list;
+        mrs = list;
         loading = false;
       });
     });
@@ -76,24 +96,24 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
                   padding: EdgeInsets.only(left: 28.w, right: 28.w),
                   child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: users.length,
+                    itemCount: mrs.length,
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemBuilder: (context, index){
-                      User user = users[index];
+                      MR mr = mrs[index];
                       return Card(
                         color: Colors.indigo,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: ListTile(
-                          title: Text(user.title, //diisi sama diagnosa
+                          title: Text( mr.diagnosa, //diisi sama diagnosa
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.w,
                                 fontWeight: FontWeight.bold),
                           ),
-                          // subtitle: Text(user.title, //bebas mau pake atau nggak
+                          // subtitle: Text(mr.title, //bebas mau pake atau nggak
                           //   style: TextStyle(
                           //       color: Colors.white,
                           //       fontWeight: FontWeight.bold),
@@ -102,7 +122,7 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailScreen(user: users[index]),
+                                builder: (context) => DetailScreen(mr: mrs[index]),
                               ),
                             );
                           },
@@ -179,8 +199,8 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
 }
 
 class DetailScreen extends StatelessWidget {
-  const DetailScreen({Key? key, required this.user}) : super(key: key);
-  final User user;
+  const DetailScreen({Key? key, required this.mr}) : super(key: key);
+  final MR mr;
 
   void onBackIconTapped() {
     Get.back();
@@ -204,7 +224,7 @@ class DetailScreen extends StatelessWidget {
                   padding: EdgeInsets.only(left: 28.w),
                   child: Material(
                     color: Colors.transparent,
-                    child: Text(user.title, //nanti diisi diagnosa
+                    child: Text(mr.diagnosa, //nanti diisi diagnosa
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 34.w,
@@ -232,16 +252,7 @@ class DetailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('User ID : '+ user.userId.toString(),
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.w,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text('NIM : '+ user.id.toString(),
+                      Text('NIM : '+ mr.pasien,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.w,
@@ -249,7 +260,7 @@ class DetailScreen extends StatelessWidget {
                       const SizedBox(
                         height: 20,
                       ),
-                      Text('Diagnosa : '+ user.title,
+                      Text('Diagnosa : '+ mr.diagnosa,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.w,
@@ -257,7 +268,7 @@ class DetailScreen extends StatelessWidget {
                       const SizedBox(
                         height: 20,
                       ),
-                      Text('Treatment : '+ user.title,
+                      Text('Treatment : '+ mr.treatment,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.w,
@@ -321,7 +332,7 @@ class FormMedical extends StatefulWidget {
 }
 
 class _FormMedical extends State<FormMedical> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
+  final formKey = GlobalKey<FormState>();
 
   void onBackIconTapped() {
     Get.back();
@@ -330,6 +341,49 @@ class _FormMedical extends State<FormMedical> {
   String nim = "";
   String diagnosa = "";
   String treatment = "";
+
+  doMR(nim, diagnosa, treatment) async {
+    final GlobalKey<State> _keyLoader = GlobalKey<State>();
+    Dialogs.loading(context, _keyLoader, "Loading ...");
+
+    try {
+      final response = await http.post(
+          Uri.parse(APIURL+"api/medical/"),
+          headers: {'Content-Type': 'application/json; charset=UTF-8'},
+          body: jsonEncode({
+            "nim": nim,
+            "diagnosa": diagnosa,
+            "treatment": treatment,
+          }));
+
+      final output = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Get.back();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                "Data Succesfully Added",
+                style: TextStyle(fontSize: 16),
+              )),
+        );
+        //debugPrint(output['message']);
+      } else {
+        Navigator.of(_keyLoader.currentContext!, rootNavigator: false).pop();
+        //debugPrint(output['message']);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                output['message'],
+                style: const TextStyle(fontSize: 16),
+              )),
+        );
+      }
+    } catch (e) {
+      Navigator.of(_keyLoader.currentContext!, rootNavigator: false).pop();
+      Dialogs.popUp(context, '$e');
+      debugPrint('$e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -378,7 +432,7 @@ class _FormMedical extends State<FormMedical> {
                     child: Column(
                       children: <Widget>[
                         Form(
-                          key: _formKey,
+                          key: formKey,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
@@ -408,10 +462,8 @@ class _FormMedical extends State<FormMedical> {
                                   });
                                 },
                                 validator: (value) {
-                                  if (value == null || value.isEmpty || value.length < 3) {
+                                  if (value == null || value.isEmpty || value.length < 10) {
                                     return 'First Name must contain at least 3 characters';
-                                  } else if (value.contains(RegExp(r'^[0-9_\-=@,\.;]+$'))) {
-                                    return 'First Name cannot contain special characters';
                                   }
                                 },
                               ),
@@ -433,9 +485,7 @@ class _FormMedical extends State<FormMedical> {
                                     border: OutlineInputBorder()),
                                 validator: (value) {
                                   if (value == null || value.isEmpty || value.length < 3) {
-                                    return 'Last Name must contain at least 3 characters';
-                                  } else if (value.contains(RegExp(r'^[0-9_\-=@,\.;]+$'))) {
-                                    return 'Last Name cannot contain special characters';
+                                    return 'Diagnosa must contain at least 3 characters';
                                   }
                                 },
                                 onFieldSubmitted: (value) {
@@ -468,9 +518,7 @@ class _FormMedical extends State<FormMedical> {
                                     border: OutlineInputBorder()),
                                 validator: (value) {
                                   if (value == null || value.isEmpty || value.length < 3) {
-                                    return 'Last Name must contain at least 3 characters';
-                                  } else if (value.contains(RegExp(r'^[0-9_\-=@,\.;]+$'))) {
-                                    return 'Last Name cannot contain special characters';
+                                    return 'Treatment must contain at least 3 characters';
                                   }
                                 },
                                 onFieldSubmitted: (value) {
@@ -492,10 +540,23 @@ class _FormMedical extends State<FormMedical> {
                                 style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(60)),
                                 onPressed: () {
-                                  // Validate returns true if the form is valid, or false otherwise.
-                                  if (_formKey.currentState!.validate()) {
-                                    Navigator.of(context).pop();
-                                  }
+                                  setState(() {
+                                    final isValid = formKey.currentState!.validate();
+                                    if (isValid) {
+                                      formKey.currentState!.save();
+                                      doMR(nim, diagnosa, treatment);
+                                      // final message =
+                                      //     'Username: $username\nPassword: $password\nEmail:';
+                                      // final snackBar = SnackBar(
+                                      //   content: Text(
+                                      //     message,
+                                      //     style: const TextStyle(fontSize: 20),
+                                      //   ),
+                                      //   backgroundColor: Colors.green,
+                                      // );
+                                      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                    }
+                                  });
                                 },
                                 child: const Text("Submit"),
                               ),

@@ -1,20 +1,22 @@
+
+import 'package:flutter_main/constant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'user.dart';
 
 class Services {
-  static const String url = 'https://jsonplaceholder.typicode.com/todos';
 
-  static Future<List<User>> getUsers() async {
+  static Future<List<MR>> getMRs(nim) async {
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(APIURL+"/api/medical/"+nim));
       if (response.statusCode == 200) {
-        final List<User> listUsers = usersFromJson(response.body);
-        return listUsers;
+        final List<MR> listMRs = MRsFromJson(response.body);
+        return listMRs;
       } else {
-        return List<User>.empty();
+        return List<MR>.empty();
       }
     } catch (e){
-      return List<User>.empty();
+      return List<MR>.empty();
     }
   }
 }
