@@ -9,11 +9,8 @@ import 'food_rec.dart';
 import 'medical_record.dart';
 import 'widgets/discover_card.dart';
 import 'package:http/http.dart' as http;
-<<<<<<< Updated upstream
-=======
-import 'widgets/customListTile.dart';
 import 'dart:math';
->>>>>>> Stashed changes
+
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key,}) : super(key: key);
@@ -25,11 +22,7 @@ class BerandaPage extends StatefulWidget {
 class _BerandaPageState extends State<BerandaPage> {
   List<News> listNews = [];
   int pagesize = 3;
-<<<<<<< Updated upstream
-  int randompage = 1;
-=======
   int randompage = Random().nextInt(7);
->>>>>>> Stashed changes
 
   getListNews() async {
     try {
