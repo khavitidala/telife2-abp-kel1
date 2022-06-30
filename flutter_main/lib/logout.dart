@@ -40,6 +40,7 @@ class _LogoutPageState extends State<LogoutPage> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       preferences.remove("is_login");
+      preferences.remove("is_konselor");
       preferences.remove("username");
       preferences.remove("nim");
     });

@@ -6,8 +6,10 @@ import 'package:flutter_main/home_page.dart';
 import 'package:flutter_main/models/news.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'food_rec.dart';
 import 'medical_record.dart';
+import 'medical_record_pasien.dart';
 import 'widgets/discover_card.dart';
 import 'package:http/http.dart' as http;
 import 'widgets/customListTile.dart';
@@ -25,6 +27,7 @@ class _BerandaPageState extends State<BerandaPage> {
   List<News> listNews = [];
   int pagesize = 3;
   int randompage = Random().nextInt(7);
+  bool isKonselor = false;
 
   getListNews() async {
     try {
@@ -50,9 +53,19 @@ class _BerandaPageState extends State<BerandaPage> {
     }
   }
 
+  Future<bool> cekKonselor() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getBool("is_konselor")!;
+  }
+
   @override
   void initState() {
     getListNews();
+    cekKonselor().then((x) {
+      setState(() {
+        isKonselor = x;
+      });
+    });
     super.initState();
   }
 
@@ -162,7 +175,12 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   void onMedicalRecTapped() {
-    Get.to(()=> MedicalRecPage(), transition: Transition.rightToLeft);
+    if (isKonselor==true) {
+      Get.to(()=> MedicalRecPage(), transition: Transition.rightToLeft);
+    } else {
+      Get.to(()=> MedicalRecPasienPage(), transition: Transition.rightToLeft);
+    }
+    
   }
 
   void onSearchIconTapped() {

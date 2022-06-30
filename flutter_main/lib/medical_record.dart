@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_main/beranda_page.dart';
+import 'package:flutter_main/home_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'icons.dart';
@@ -209,7 +211,13 @@ class _MedicalRecPageState extends State<MedicalRecPage> {
   }
 
   void onBackIconTapped() {
-    Get.back();
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage(),
+        ),
+        (route) => false,
+      );
   }
 
   @override
@@ -342,6 +350,12 @@ class DetailScreen extends StatelessWidget {
           ],
         ),
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //   },
+      //   backgroundColor: Colors.blue,
+      //   child: const Icon(Icons.delete)
+      // ),
     );
   }
 }
@@ -362,6 +376,22 @@ class _FormMedical extends State<FormMedical> {
   String nim = "";
   String diagnosa = "";
   String treatment = "";
+  String dokter = "";
+
+  Future<String> ceckLogin() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString("nim")!;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ceckLogin().then((x) {
+      setState(() {
+        dokter = x;
+      });
+    });
+  }
 
   doMR(nim, diagnosa, treatment) async {
     final GlobalKey<State> _keyLoader = GlobalKey<State>();
@@ -373,6 +403,7 @@ class _FormMedical extends State<FormMedical> {
           headers: {'Content-Type': 'application/json; charset=UTF-8'},
           body: jsonEncode({
             "nim": nim,
+            "dokter": dokter,
             "diagnosa": diagnosa,
             "treatment": treatment,
           }));
@@ -495,8 +526,8 @@ class _FormMedical extends State<FormMedical> {
                                   });
                                 },
                                 validator: (value) {
-                                  if (value == null || value.isEmpty || value.length < 10) {
-                                    return 'First Name must contain at least 3 characters';
+                                  if (value == null || value.isEmpty) {
+                                    return 'NIM must not empty!';
                                   }
                                 },
                               ),
