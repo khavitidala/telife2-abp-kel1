@@ -9,5 +9,5 @@ urlpatterns = [
     path('login/', views.LoginView.as_view()),
     path('medical/', views.MedicalRecordView.as_view()),
     path('medical/<str:nim>/', views.MedicalRecordView.as_view()),
-    path('medical/<int:id>/', views.MedicalRecordView.as_view()),
+    path('delete-medical/<int:id>/', views.MedicalRecordView.as_view()),
 ]

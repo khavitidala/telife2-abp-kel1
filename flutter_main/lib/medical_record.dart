@@ -350,14 +350,45 @@ class DetailScreen extends StatelessWidget {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //   },
-      //   backgroundColor: Colors.blue,
-      //   child: const Icon(Icons.delete)
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          deleteMR(context, mr.id);
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.delete)
+      ),
     );
   }
+
+  void deleteMR(BuildContext context, int id) async {
+    try {
+      final response = await http.delete(
+          Uri.parse(APIURL+"api/delete-medical/"+id.toString()+"/"),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
+
+      if (response.statusCode == 200) {
+        final dataDecode = jsonDecode(response.body);
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => MedicalRecPage(),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                dataDecode["message"],
+                style: TextStyle(fontSize: 16),
+              )),
+        );
+      }
+    } catch (e) {
+      debugPrint('$e');
+    }
+  }
+
 }
 
 class FormMedical extends StatefulWidget {
@@ -609,16 +640,6 @@ class _FormMedical extends State<FormMedical> {
                                     if (isValid) {
                                       formKey.currentState!.save();
                                       doMR(nim, diagnosa, treatment);
-                                      // final message =
-                                      //     'Username: $username\nPassword: $password\nEmail:';
-                                      // final snackBar = SnackBar(
-                                      //   content: Text(
-                                      //     message,
-                                      //     style: const TextStyle(fontSize: 20),
-                                      //   ),
-                                      //   backgroundColor: Colors.green,
-                                      // );
-                                      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                     }
                                   });
                                 },
