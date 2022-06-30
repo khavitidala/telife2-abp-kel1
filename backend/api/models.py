@@ -15,6 +15,7 @@ class Akun(models.Model):
 
 class MedicalRecord(models.Model):
     pasien = models.ForeignKey(Akun, to_field="nim", on_delete=models.CASCADE)
+    dokter = models.CharField(max_length=255, null=True, blank=True)
     diagnosa = models.CharField(max_length=512, null=False, blank=False)
     treatment = models.CharField(max_length=512, null=False, blank=False)
 
