@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_main/home_page.dart';
 import 'package:flutter_main/login.dart';
 import 'package:flutter_main/welcome.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'icons.dart';
 import 'widgets/svg_asset.dart';
@@ -74,7 +74,13 @@ class _LogoutPageState extends State<LogoutPage> {
   }
 
   void onBackIconTapped() {
-   Get.back();
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage(),
+        ),
+        (route) => false,
+      );
   }
   
   @override

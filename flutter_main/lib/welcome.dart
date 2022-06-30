@@ -38,7 +38,7 @@ class Welcome extends StatelessWidget {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text: 'Tel',
+                  text: 'Telife',
                   style: GoogleFonts.portLligatSans(
                     textStyle: Theme.of(context).textTheme.headline1,
                     fontSize: 30,
@@ -47,7 +47,7 @@ class Welcome extends StatelessWidget {
                   ),
                   children: [
                     TextSpan(
-                      text: 'ife',
+                      text: '',
                       style: TextStyle(color: Colors.black, fontSize: 30),
                     ),
                   ],
