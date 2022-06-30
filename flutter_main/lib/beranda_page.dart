@@ -36,7 +36,6 @@ class _BerandaPageState extends State<BerandaPage> {
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
           });
-      print(response.statusCode);
       if (response.statusCode == 200) {
         final dataDecode = jsonDecode(response.body);
         setState(() {

@@ -18,10 +18,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   String username = "";
-  static const List<Widget> _widgetOptions = <Widget>[
+  static List<Widget> _widgetOptions = <Widget>[
     BerandaPage(),
     ChartsPage(),
-    // ProfilePage(),
+    ProfilePage(),
     LogoutPage()
   ];
 
@@ -140,26 +140,26 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            // BottomNavigationBarItem(
-            //   icon: SvgAsset(assetName: AssetName.profile),
-            //   label: '',
-            //   tooltip: 'Profile',
-            //   activeIcon: Container(
-            //     decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(12),
-            //       boxShadow: [
-            //         BoxShadow(
-            //             color: Color(0xff4A80F0).withOpacity(0.3),
-            //             offset: Offset(0, 4),
-            //             blurRadius: 20),
-            //       ],
-            //     ),
-            //     child: SvgAsset(
-            //       assetName: AssetName.profile,
-            //       color: Color(0xff4A80F0),
-            //     ),
-            //   ),
-            // ),
+            BottomNavigationBarItem(
+              icon: SvgAsset(assetName: AssetName.profile),
+              label: '',
+              tooltip: 'Profile',
+              activeIcon: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color(0xff4A80F0).withOpacity(0.3),
+                        offset: Offset(0, 4),
+                        blurRadius: 20),
+                  ],
+                ),
+                child: SvgAsset(
+                  assetName: AssetName.profile,
+                  color: Color(0xff4A80F0),
+                ),
+              ),
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.logout, color: Color(0x515979).withOpacity(1),),
               label: '',

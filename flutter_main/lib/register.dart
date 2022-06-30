@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_main/constant.dart';
 import 'package:flutter_main/home_page.dart';
+import 'package:flutter_main/login.dart';
 import 'package:flutter_main/widgets/dialogs.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
@@ -253,7 +254,7 @@ class _MainPageState extends State<RegisterApp> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) => const HomePage(),
+            builder: (BuildContext context) => LoginApp(),
           ),
           (route) => false,
         );

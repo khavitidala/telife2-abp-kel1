@@ -4,6 +4,7 @@ class User {
   final String password;
   final String nama;
   final String nim;
+  final String email;
   final bool isadmin;
   final bool iskonselor;
   final bool ispasien;
@@ -12,6 +13,7 @@ class User {
       {required this.password,
       required this.nama,
       required this.nim,
+      required this.email,
       required this.isadmin,
       required this.iskonselor,
       required this.ispasien,
@@ -25,6 +27,7 @@ class User {
         password: json['data']['password'],
         nama: json['data']['nama'],
         nim: json['data']['nim'],
+        email: json['data']['email'],
         isadmin: json['data']['is_admin'],
         iskonselor: json['data']['is_konselor'],
         ispasien: json['data']['is_pasien']);
