@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -70,33 +71,74 @@ class _profilePageState extends State<profilePage1> {
 
   @override
   Widget build(BuildContext context) {
-    // ScreenUtil.init(context, height: 896, width: 414, allowFontScaling: true);
 
     return Column(
         children: <Widget>[
           Container(
-            height: kSpacingUnit.w * 10,
-            width: kSpacingUnit.w * 10,
+            height: kSpacingUnit.w * 15,
+            width: kSpacingUnit.w * 15,
             margin: EdgeInsets.only(top: kSpacingUnit.w * 3),
             child: CircleAvatar(
-                  radius: kSpacingUnit.w * 5,
+                  radius: kSpacingUnit.w * 10,
                   backgroundImage: AssetImage('assets/pics/avatar.png'),
                 ),
           ),
-          SizedBox(height: kSpacingUnit.w * 2),
-          Text(
-            'Ryan Abdurohman',
-            style: kTitleTextStyle,
-          ),
-          SizedBox(height: kSpacingUnit.w * 0.5),
-          Text(
-            'Ryan Abdurohman',
-            style: kCaptionTextStyle,
-          ),
-          SizedBox(height: kSpacingUnit.w * 2),
+          // SizedBox(height: kSpacingUnit.w * 2),
+          // Text(
+          //   'Ryan Abdurohman',
+          //   style: kTitleTextStyle,
+          // ),
+          // SizedBox(height: kSpacingUnit.w * 0.5),
+          // Text(
+          //   'RyanAbdurohman@gmail.com',
+          //   style: kCaptionTextStyle,
+          // ),
+          // SizedBox(height: kSpacingUnit.w * 2),
+          buildInfo("Ryan Abdurohman", "Name"),
+          buildInfo("RyanAbdurohman@gmail.com", "Emall"),
+          buildInfo("R12345678", "Nomor Telepon"),
         ],
     );
 
   }
 }
+
+Widget buildInfo(String value, String title) =>
+  Padding(
+    padding: EdgeInsets.only(top: 10,bottom: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Container(
+          width: 350,
+          height: 25,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.grey,
+                width: 1,
+              )
+            )
+          ),
+          child: Expanded(
+            child: Text(
+            value,
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          )
+        )
+      ],
+    ),
+  );
 

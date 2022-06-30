@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_main/welcome.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'widgets/profile_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, child) => GetMaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(),
-        home: Welcome(),
+        home: ProfilePage(),
       ),
     );
   }
