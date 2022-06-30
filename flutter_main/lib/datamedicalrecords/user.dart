@@ -1,33 +1,24 @@
 import 'dart:convert';
 
-List<User> usersFromJson(String str) => List<User>.from(json.decode(str).map((x) => User.fromJson(x)));
+import 'package:flutter/foundation.dart';
 
-String userToJson(List<User> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-class User {
-  User({
-    required this.userId,
+class MR {
+  MR({
     required this.id,
-    required this.title,
-    required this.completed,
+    required this.pasien,
+    required this.diagnosa,
+    required this.treatment,
   });
 
-  int userId;
   int id;
-  String title;
-  bool completed;
+  String pasien;
+  String diagnosa;
+  String treatment;
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
-    userId: json["userId"],
+  factory MR.fromJson(Map<String, dynamic> json) => MR(
     id: json["id"],
-    title: json["title"],
-    completed: json["completed"],
+    pasien: json["pasien_id"],
+    diagnosa: json["diagnosa"],
+    treatment: json["treatment"],
   );
-
-  Map<String, dynamic> toJson() => {
-    "userId": userId,
-    "id": id,
-    "title": title,
-    "completed": completed,
-  };
 }

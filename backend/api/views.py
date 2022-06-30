@@ -78,9 +78,12 @@ class MedicalRecordView(View):
     
     @method_decorator([csrf_exempt])
     def post(self, request):
-        data = json.loads(request.body.decode("utf-8"))
-        MedicalRecordApp.create(**data)
-        return JsonResponse({"message": "ok"})
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            MedicalRecordApp.create(**data)
+            return JsonResponse({"message": "ok"})
+        except ApiError as e:
+            return JsonResponse({"message": str(e)}, status=404)
     
     @method_decorator([csrf_exempt])
     def delete(self, request, id: int):

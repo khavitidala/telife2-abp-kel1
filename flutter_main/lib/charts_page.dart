@@ -82,25 +82,25 @@ class MapSampleState extends State<MapSample> {
     );
   }
 
-  Set<Polygon> myPolygon() {
-    List<LatLng> polygonCoords = [];
-    polygonCoords.add(LatLng(-6.975581462489882, 107.6307637079522));
-    polygonCoords.add(LatLng(-6.975575564736307, 107.63055772782457));
-    polygonCoords.add(LatLng(-6.97600216871913, 107.63055376666827));
-    polygonCoords.add(LatLng(-6.9760041346352075, 107.6307597467959));
-
-    Set<Polygon> polygonSet = new Set();
-    polygonSet.add(Polygon(
-        polygonId: PolygonId('test'),
-        points: polygonCoords,
-        strokeColor: Colors.red));
-
-    return polygonSet;
-  }
+  // Set<Polygon> myPolygon() {
+  //   List<LatLng> polygonCoords = [];
+  //   polygonCoords.add(LatLng(-6.975581462489882, 107.6307637079522));
+  //   polygonCoords.add(LatLng(-6.975575564736307, 107.63055772782457));
+  //   polygonCoords.add(LatLng(-6.97600216871913, 107.63055376666827));
+  //   polygonCoords.add(LatLng(-6.9760041346352075, 107.6307597467959));
+  //
+  //   Set<Polygon> polygonSet = new Set();
+  //   polygonSet.add(Polygon(
+  //       polygonId: PolygonId('test'),
+  //       points: polygonCoords,
+  //       strokeColor: Colors.red));
+  //
+  //   return polygonSet;
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       body: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: CameraPosition(
@@ -108,7 +108,7 @@ class MapSampleState extends State<MapSample> {
           zoom: 14,
         ),
         markers: _markers,
-        polygons: myPolygon(),
+        // polygons: myPolygon(),
       ),
     );
   }

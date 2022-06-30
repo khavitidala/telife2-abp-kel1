@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_main/constant.dart';
+import 'package:flutter_main/home_page.dart';
 import 'package:flutter_main/models/news.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,8 @@ import 'medical_record.dart';
 import 'widgets/discover_card.dart';
 import 'package:http/http.dart' as http;
 import 'widgets/customListTile.dart';
+import 'dart:math';
+
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key,}) : super(key: key);
@@ -21,7 +24,7 @@ class BerandaPage extends StatefulWidget {
 class _BerandaPageState extends State<BerandaPage> {
   List<News> listNews = [];
   int pagesize = 3;
-  int randompage = 3;
+  int randompage = Random().nextInt(7);
 
   getListNews() async {
     try {
@@ -30,15 +33,18 @@ class _BerandaPageState extends State<BerandaPage> {
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
           });
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
         final dataDecode = jsonDecode(response.body);
         setState(() {
-          for (var i = 0; i < dataDecode.length; i++) {
-            listNews.add(News.fromJson(dataDecode["articles"][i]));
+          for (var i = 0; i < dataDecode["articles"].length; i++) {
+            if (dataDecode['articles'][i]['urlToImage'] is String){
+              listNews.add(News.fromJson(dataDecode["articles"][i]));
+            }
           }
         });
       }
+      randompage = Random().nextInt(7);
     } catch (e) {
       debugPrint('$e');
     }
@@ -142,7 +148,13 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   void onRenewTapped() {
-    
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => HomePage(),
+        transitionDuration: Duration(seconds: 0),
+      ),
+    );
   }
 
   void onFoodRecTapped() {
